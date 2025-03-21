@@ -13,6 +13,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column;
         }
         .container {
             background: white;
@@ -20,11 +21,39 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            margin-bottom: 20px;
         }
         .saldo {
             font-size: 24px;
             font-weight: bold;
             color: #2d8f2d;
+        }
+        .add-account {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .add-account input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .add-account button {
+            background-color: #2d8f2d;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .add-account button:hover {
+            background-color: #256b25;
         }
     </style>
 </head>
@@ -33,5 +62,21 @@
         <h2>Saldo Disponível</h2>
         <p class="saldo">R$ 0,00</p>
     </div>
+    <div class="add-account">
+        <h3>Adicionar Conta TikTok</h3>
+        <input type="text" id="tiktokUsername" placeholder="Digite o usuário do TikTok">
+        <button onclick="addAccount()">Adicionar</button>
+    </div>
+
+    <script>
+        function addAccount() {
+            var username = document.getElementById("tiktokUsername").value;
+            if(username) {
+                alert("Conta " + username + " adicionada com sucesso!");
+            } else {
+                alert("Por favor, insira um nome de usuário válido.");
+            }
+        }
+    </script>
 </body>
 </html>
