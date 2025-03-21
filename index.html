@@ -64,11 +64,67 @@
     </div>
     <div class="login-form">
         <h3>Login Ganharnasredes</h3>
-        <form action="https://www.ganharnasredes.com/painel/" method="POST">
-            <input type="email" name="email" placeholder="Digite seu e-mail" required>
-            <input type="password" name="senha" placeholder="Digite sua senha" required>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Digite seu e-mail" required>
+            <input type="password" id="senha" placeholder="Digite sua senha" required>
+            <label><input type="checkbox" id="rememberMe"> Lembrar-me</label>
             <button type="submit">Entrar</button>
         </form>
     </div>
+
+    <script>
+        // Função para salvar cookies
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + "; path=/" + expires;
+        }
+
+        // Função para obter cookies
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // Preencher os campos com os cookies salvos
+        window.onload = function() {
+            let savedEmail = getCookie("email");
+            let savedPassword = getCookie("senha");
+            if (savedEmail && savedPassword) {
+                document.getElementById("email").value = savedEmail;
+                document.getElementById("senha").value = savedPassword;
+                document.getElementById("rememberMe").checked = true;
+            }
+        };
+
+        // Salvar login nos cookies se "Lembrar-me" estiver marcado
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let email = document.getElementById("email").value;
+            let senha = document.getElementById("senha").value;
+            let rememberMe = document.getElementById("rememberMe").checked;
+            
+            if (rememberMe) {
+                setCookie("email", email, 30);
+                setCookie("senha", senha, 30);
+            } else {
+                setCookie("email", "", -1);
+                setCookie("senha", "", -1);
+            }
+
+            alert("Login salvo! Redirecionando...");
+            window.location.href = "https://ganharnasredes.com/painel";
+        });
+    </script>
 </body>
 </html>
