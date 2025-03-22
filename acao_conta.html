@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ações na Conta</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .action-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background-color: #45a049;
+        }
+        .link-container {
+            margin-top: 20px;
+        }
+        .link-container a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .link-container a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ações na Conta</h2>
+
+        <p id="selectedAccount">Nenhuma conta selecionada.</p>
+
+        <button class="action-button" onclick="performAction()">Realizar Ação</button>
+
+        <div class="link-container">
+            <a href="gerenciar_contas.html">Voltar para Gerenciar Contas</a>
+        </div>
+    </div>
+
+    <script>
+        // Carregar a conta selecionada
+        function loadSelectedAccount() {
+            const selectedAccount = localStorage.getItem('selectedAccount');
+            if (selectedAccount) {
+                document.getElementById('selectedAccount').textContent = `Conta Selecionada: ${selectedAccount}`;
+            } else {
+                document.getElementById('selectedAccount').textContent = "Nenhuma conta selecionada.";
+            }
+        }
+
+        // Função para realizar uma ação (exemplo de um simples alert)
+        function performAction() {
+            const selectedAccount = localStorage.getItem('selectedAccount');
+            if (selectedAccount) {
+                alert(`Ação realizada na conta: ${selectedAccount}`);
+            } else {
+                alert("Nenhuma conta selecionada.");
+            }
+        }
+
+        // Carregar a conta ao abrir a página
+        window.onload = loadSelectedAccount;
+    </script>
+</body>
+</html>
