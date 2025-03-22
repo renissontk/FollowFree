@@ -107,12 +107,7 @@
 <body>
     <div class="container">
         <h2>Selecionar Conta</h2>
-        <label for="accountSelector">Escolha uma conta:</label>
-        <select id="accountSelector">
-            <option value="7378036873987736619">Conta 1</option>
-            <option value="1234567890123456789">Conta 2</option>
-            <option value="9876543210987654321">Conta 3</option>
-        </select>
+        <p id="selectedAccount">Nenhuma conta selecionada</p>
         
         <p id="statusMessage" class="status-message">Buscando ação...</p>
 
@@ -130,13 +125,27 @@
     <script>
         let fetchInterval;
 
+        function loadSelectedAccount() {
+            const selectedAccount = localStorage.getItem('selectedAccount');
+            if (selectedAccount) {
+                document.getElementById('selectedAccount').textContent = `Conta Selecionada: ${selectedAccount}`;
+            } else {
+                document.getElementById('selectedAccount').textContent = "Nenhuma conta selecionada";
+            }
+        }
+
         function startFetchingAction() {
             clearInterval(fetchInterval);
             fetchInterval = setInterval(fetchAction, 3000);
         }
 
         async function fetchAction() {
-            const accountId = document.getElementById('accountSelector').value;
+            const accountId = localStorage.getItem('selectedAccount');
+            if (!accountId) {
+                alert("Nenhuma conta selecionada!");
+                return;
+            }
+
             const apiUrl = `https://cors-anywhere.herokuapp.com/https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=${accountId}&is_tiktok=1&tipo=1`;
             
             try {
@@ -164,8 +173,10 @@
 
         function goBack() {
             clearInterval(fetchInterval);
-            window.location.href = "index.html";
+            window.location.href = "gerenciar_contas.html";
         }
+
+        window.onload = loadSelectedAccount;
     </script>
 </body>
 </html>
