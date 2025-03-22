@@ -105,7 +105,7 @@
         <h2>Selecionar Conta</h2>
 
         <label for="accountSelect">Escolha uma conta:</label>
-        <select id="accountSelect" class="select-box" onchange="fetchAction()">
+        <select id="accountSelect" class="select-box" onchange="startFetchingAction()">
             <option value="">Selecione uma conta</option>
         </select>
 
@@ -120,6 +120,8 @@
     </div>
 
     <script>
+        let fetchInterval;
+
         function loadAccounts() {
             const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
             const accountSelect = document.getElementById('accountSelect');
@@ -135,13 +137,22 @@
             });
         }
 
-        async function fetchAction() {
+        function startFetchingAction() {
             const selectedAccount = document.getElementById('accountSelect').value;
+
             if (!selectedAccount) {
                 document.getElementById('actionBox').style.display = "none";
+                clearInterval(fetchInterval);
                 return;
             }
 
+            // Para garantir que não tenha múltiplos intervalos ativos
+            clearInterval(fetchInterval);
+
+            fetchInterval = setInterval(() => fetchAction(selectedAccount), 3000);
+        }
+
+        async function fetchAction(accountId) {
             try {
                 const url = `http://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=7378036873987736619&is_tiktok=1&tipo=1`;
                 const response = await fetch(url);
@@ -153,17 +164,16 @@
                     document.getElementById('actionUrl').href = data.url;
                     document.getElementById('points').textContent = data.quantidade_pontos;
                     document.getElementById('actionBox').style.display = "block";
-                } else {
-                    alert("Nenhuma ação encontrada para esta conta.");
-                    document.getElementById('actionBox').style.display = "none";
+
+                    clearInterval(fetchInterval); // Para de chamar a API ao encontrar uma ação válida
                 }
             } catch (error) {
-                alert("Erro ao buscar ação. Tente novamente.");
                 console.error("Erro na requisição:", error);
             }
         }
 
         function goBack() {
+            clearInterval(fetchInterval); // Para a busca ao sair
             window.location.href = "index.html";
         }
 
