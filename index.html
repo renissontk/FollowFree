@@ -1,49 +1,132 @@
+html:
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecionando...</title>
-    <script>
-        // Função para definir cookies no navegador
-        function setCookie(name, value, domain, path, expires, secure, httpOnly, sameSite) {
-            let cookieString = `${name}=${value}; path=${path};`;
-            if (domain) cookieString += ` domain=${domain};`;
-            if (expires) {
-                let expDate = new Date(expires * 1000).toUTCString();
-                cookieString += ` expires=${expDate};`;
-            }
-            if (secure) cookieString += " Secure;";
-            if (sameSite) cookieString += ` SameSite=${sameSite};`;
-            document.cookie = cookieString;
+    <title>Saldo Disponível</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
         }
-
-        // Lista de cookies a serem definidos
-        let cookies = [
-            {
-                "name": "PHPSESSID",
-                "value": "k29pq0ltqcen8odtqq1bvab8ct",
-                "domain": ".ganharnasredes.com",
-                "path": "/",
-                "expires": 1744844635,
-                "secure": false,
-                "sameSite": "Lax"
-            }
-        ];
-
-        // Definir os cookies no navegador
-        cookies.forEach(cookie => {
-            setCookie(cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expires, cookie.secure, false, cookie.sameSite);
-        });
-
-        // Abrir o painel do site em uma nova aba após definir os cookies
-        setTimeout(() => {
-            window.open("https://ganharnasredes.com/painel", "_blank");
-        }, 2000); // Aguarda 2 segundos para garantir que os cookies sejam salvos
-    </script>
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .saldo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d8f2d;
+        }
+        .login-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-form button {
+            background-color: #2d8f2d;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .login-form button:hover {
+            background-color: #256b25;
+        }
+    </style>
 </head>
 <body>
-    <h2>Redirecionando para o painel...</h2>
-    <p>Aguarde um momento...</p>
+    <div class="container">
+        <h2>Saldo Disponível</h2>
+        <p class="saldo">R$ 0,00</p>
+    </div>
+    <div class="login-form">
+        <h3>Login Ganharnasredes</h3>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Digite seu e-mail" required>
+            <input type="password" id="senha" placeholder="Digite sua senha" required>
+            <label><input type="checkbox" id="rememberMe"> Lembrar-me</label>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        // Função para salvar cookies
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + "; path=/" + expires;
+        }
+
+        // Função para obter cookies
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // Preencher os campos com os cookies salvos
+        window.onload = function() {
+            let savedEmail = getCookie("email");
+            let savedPassword = getCookie("senha");
+            if (savedEmail && savedPassword) {
+                document.getElementById("email").value = savedEmail;
+                document.getElementById("senha").value = savedPassword;
+                document.getElementById("rememberMe").checked = true;
+            }
+        };
+
+        // Salvar login nos cookies se "Lembrar-me" estiver marcado
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let email = document.getElementById("email").value;
+            let senha = document.getElementById("senha").value;
+            let rememberMe = document.getElementById("rememberMe").checked;
+            
+            if (rememberMe) {
+                setCookie("email", email, 30);
+                setCookie("senha", senha, 30);
+            } else {
+                setCookie("email", "", -1);
+                setCookie("senha", "", -1);
+            }
+
+            alert("Login salvo! Redirecionando...");
+            window.location.href = "https://ganharnasredes.com/painel";
+        });
+    </script>
 </body>
 </html>
