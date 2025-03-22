@@ -22,6 +22,13 @@
             text-align: center;
             width: 300px;
         }
+        .select-box {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
         .action-button {
             width: 100%;
             padding: 10px;
@@ -52,38 +59,46 @@
     <div class="container">
         <h2>Ações na Conta</h2>
 
-        <p id="selectedAccount">Nenhuma conta selecionada.</p>
+        <label for="accountSelect">Selecione uma conta:</label>
+        <select id="accountSelect" class="select-box">
+            <option value="">Selecione uma conta</option>
+            <!-- As opções serão preenchidas dinamicamente -->
+        </select>
 
         <button class="action-button" onclick="performAction()">Realizar Ação</button>
 
         <div class="link-container">
-            <a href="gerenciar_contas.html">Voltar para Gerenciar Contas</a>
+            <a href="gerenciar_contas.html">Gerenciar Contas</a>
         </div>
     </div>
 
     <script>
-        // Carregar a conta selecionada
-        function loadSelectedAccount() {
-            const selectedAccount = localStorage.getItem('selectedAccount');
-            if (selectedAccount) {
-                document.getElementById('selectedAccount').textContent = `Conta Selecionada: ${selectedAccount}`;
-            } else {
-                document.getElementById('selectedAccount').textContent = "Nenhuma conta selecionada.";
-            }
+        function loadAccounts() {
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+            const accountSelect = document.getElementById('accountSelect');
+
+            // Adiciona as contas como opções no select
+            accounts.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account;
+                option.textContent = account;
+                accountSelect.appendChild(option);
+            });
         }
 
-        // Função para realizar uma ação (exemplo de um simples alert)
         function performAction() {
-            const selectedAccount = localStorage.getItem('selectedAccount');
-            if (selectedAccount) {
-                alert(`Ação realizada na conta: ${selectedAccount}`);
-            } else {
-                alert("Nenhuma conta selecionada.");
+            const selectedAccount = document.getElementById('accountSelect').value;
+
+            if (!selectedAccount) {
+                alert("Por favor, selecione uma conta antes de continuar.");
+                return;
             }
+
+            alert(`Ação realizada na conta: ${selectedAccount}`);
         }
 
-        // Carregar a conta ao abrir a página
-        window.onload = loadSelectedAccount;
+        // Carrega as contas quando a página abrir
+        window.onload = loadAccounts;
     </script>
 </body>
 </html>
