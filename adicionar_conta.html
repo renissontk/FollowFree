@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Conta</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .form-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .form-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+        .link-container {
+            margin-top: 20px;
+        }
+        .link-container a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .link-container a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Adicionar Conta</h2>
+
+        <div class="form-container">
+            <input type="text" placeholder="Nome da Conta" id="accountName">
+            <button onclick="addAccount()">Adicionar Conta</button>
+        </div>
+
+        <div class="link-container">
+            <a href="index.html">Voltar para Saldo Disponível</a>
+        </div>
+    </div>
+
+    <script>
+        function addAccount() {
+            const accountName = document.getElementById('accountName').value;
+            if (accountName) {
+                alert(`Conta "${accountName}" adicionada com sucesso!`);
+                document.getElementById('accountName').value = '';  // Limpa o campo de entrada
+            } else {
+                alert("Por favor, insira um nome para a conta.");
+            }
+        }
+    </script>
+</body>
+</html>
