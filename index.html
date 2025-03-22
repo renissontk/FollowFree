@@ -27,17 +27,10 @@
             font-weight: bold;
             color: #2d8f2d;
         }
-        .select-box {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
         .action-button {
             width: 100%;
             padding: 10px;
-            margin-top: 10px;
+            margin-top: 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -47,17 +40,6 @@
         .action-button:hover {
             background-color: #45a049;
         }
-        .link-container {
-            margin-top: 20px;
-        }
-        .link-container a {
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        .link-container a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -65,49 +47,13 @@
         <h2>Saldo Disponível</h2>
         <p class="saldo">R$ 0,00</p>
 
-        <label for="accountSelect">Selecione uma conta:</label>
-        <select id="accountSelect" class="select-box">
-            <option value="">Selecione uma conta</option>
-            <!-- Contas serão preenchidas dinamicamente -->
-        </select>
-
-        <button class="action-button" onclick="performAction()">Realizar Ação</button>
-
-        <div class="link-container">
-            <a href="gerenciar_contas.html">Gerenciar Contas</a>
-            <br>
-            <a href="adicionar_conta.html">Adicionar Conta</a>
-        </div>
+        <button class="action-button" onclick="goToSelectAccount()">Realizar Ação</button>
     </div>
 
     <script>
-        function loadAccounts() {
-            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-            const accountSelect = document.getElementById('accountSelect');
-
-            // Adiciona as contas ao dropdown
-            accountSelect.innerHTML = '<option value="">Selecione uma conta</option>';
-            accounts.forEach(account => {
-                const option = document.createElement('option');
-                option.value = account;
-                option.textContent = account;
-                accountSelect.appendChild(option);
-            });
+        function goToSelectAccount() {
+            window.location.href = "selecionar_conta.html";
         }
-
-        function performAction() {
-            const selectedAccount = document.getElementById('accountSelect').value;
-
-            if (!selectedAccount) {
-                alert("Por favor, selecione uma conta antes de continuar.");
-                return;
-            }
-
-            alert(`Ação realizada na conta: ${selectedAccount}`);
-        }
-
-        // Carrega as contas quando a página abre
-        window.onload = loadAccounts;
     </script>
 </body>
 </html>
