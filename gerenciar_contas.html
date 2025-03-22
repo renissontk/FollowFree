@@ -32,6 +32,10 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .account-item:hover {
+            background-color: #e0e0e0;
         }
         .link-container {
             margin-top: 20px;
@@ -72,6 +76,13 @@
                 const li = document.createElement('li');
                 li.classList.add('account-item');
                 li.textContent = account;
+
+                // Ao clicar, armazena a conta selecionada e redireciona para a página de ações
+                li.onclick = function() {
+                    localStorage.setItem('selectedAccount', account);
+                    window.location.href = 'acao_conta.html';  // Redireciona para a página de ações
+                };
+
                 accountList.appendChild(li);
             });
 
