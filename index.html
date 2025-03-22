@@ -27,18 +27,27 @@
             font-weight: bold;
             color: #2d8f2d;
         }
-        .action-button {
+        .action-button, .add-button {
             width: 100%;
             padding: 10px;
-            margin-top: 20px;
-            background-color: #4CAF50;
-            color: white;
+            margin-top: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            color: white;
+            font-size: 16px;
+        }
+        .action-button {
+            background-color: #4CAF50;
         }
         .action-button:hover {
             background-color: #45a049;
+        }
+        .add-button {
+            background-color: #007BFF;
+        }
+        .add-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -48,11 +57,16 @@
         <p class="saldo">R$ 0,00</p>
 
         <button class="action-button" onclick="goToSelectAccount()">Realizar Ação</button>
+        <button class="add-button" onclick="goToAddAccount()">Adicionar Conta</button>
     </div>
 
     <script>
         function goToSelectAccount() {
             window.location.href = "selecionar_conta.html";
+        }
+
+        function goToAddAccount() {
+            window.location.href = "adicionar_conta.html";
         }
     </script>
 </body>
