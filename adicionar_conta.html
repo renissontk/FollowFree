@@ -69,6 +69,8 @@
 
         <div class="link-container">
             <a href="index.html">Voltar para Saldo Disponível</a>
+            <br>
+            <a href="gerenciar_contas.html">Gerenciar Contas</a>
         </div>
     </div>
 
@@ -76,6 +78,11 @@
         function addAccount() {
             const accountName = document.getElementById('accountName').value;
             if (accountName) {
+                // Recupera as contas existentes no LocalStorage
+                let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+                accounts.push(accountName);
+                localStorage.setItem('accounts', JSON.stringify(accounts));
+
                 alert(`Conta "${accountName}" adicionada com sucesso!`);
                 document.getElementById('accountName').value = '';  // Limpa o campo de entrada
             } else {
