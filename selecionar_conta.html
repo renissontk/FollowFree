@@ -115,28 +115,44 @@
     <script>
         let fetchInterval;
 
-        // Função para capturar o accountId da URL
-        function getAccountIdFromUrl() {
+        // Função para capturar parâmetros da URL
+        function getParameterFromUrl(param) {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('accountId');
+            return urlParams.get(param);
         }
 
-        // Função para iniciar a busca de ações
-        function startFetchingAction() {
-            const accountId = getAccountIdFromUrl();
-            if (accountId) {
-                fetchInterval = setInterval(() => fetchAction(accountId), 3000);
-            } else {
-                console.error('ID da conta não encontrado na URL');
-                document.getElementById('statusMessage').textContent = "Erro: ID da conta não encontrado.";
+        // Função para buscar o id_conta usando a API bind_tk
+        async function fetchAccountId(nomeUsuario) {
+            try {
+                const response = await fetch(
+                    `https://cors-anywhere.herokuapp.com/http://api.ganharnoinsta.com/bind_tk.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&nome_usuario=${nomeUsuario}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === "success") {
+                        return data.id_conta; // Retorna o id_conta da resposta
+                    } else {
+                        throw new Error("Erro ao buscar id_conta: " + data.status);
+                    }
+                } else {
+                    throw new Error("Erro na requisição: " + response.status);
+                }
+            } catch (error) {
+                console.error("Erro na requisição à API bind_tk:", error);
+                document.getElementById('statusMessage').textContent = "Erro ao buscar conta.";
+                return null;
             }
         }
 
-        // Função para buscar a ação da API
-        async function fetchAction(accountId) {
+        // Função para buscar ações usando o id_conta
+        async function fetchAction(idConta) {
             try {
                 const response = await fetch(
-                    `https://cors-anywhere.herokuapp.com/https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=$737803687398773669&is_tiktok=1&tipo=1`,
+                    `https://cors-anywhere.herokuapp.com/https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=${idConta}&is_tiktok=1&tipo=1`,
                     {
                         method: 'GET',
                     }
@@ -167,13 +183,27 @@
             }
         }
 
+        // Função para iniciar o processo de busca
+        async function startFetchingAction() {
+            const nomeUsuario = getParameterFromUrl('nomeUsuario');
+            if (nomeUsuario) {
+                const idConta = await fetchAccountId(nomeUsuario);
+                if (idConta) {
+                    fetchInterval = setInterval(() => fetchAction(idConta), 3000);
+                }
+            } else {
+                console.error('Nome do usuário não encontrado na URL');
+                document.getElementById('statusMessage').textContent = "Erro: Nome do usuário não encontrado.";
+            }
+        }
+
         // Função para voltar à página de gerenciar contas
         function goBack() {
             clearInterval(fetchInterval);
             window.location.href = "gerenciar_contas.html";
         }
 
-        // Inicia a busca de ações ao carregar a página
+        // Inicia o processo ao carregar a página
         window.onload = startFetchingAction;
     </script>
 </body>
