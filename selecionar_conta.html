@@ -9,7 +9,6 @@
             --bg-light: #ffffff;
             --text-light: #24292e;
             --container-light: #f6f8fa;
-
             --bg-dark: #0d1117;
             --text-dark: #c9d1d9;
             --container-dark: #161b22;
@@ -45,43 +44,19 @@
             color: #007BFF;
         }
 
-        .action-box {
-            margin-top: 15px;
-            padding: 10px;
-            background: var(--container-light);
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            text-align: left;
-            display: none;
-            transition: background 0.3s, border 0.3s;
-        }
-
-        .action-box p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-
-        .back-button, .fetch-button {
+        .back-button {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
+            background-color: #d9534f;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            color: white;
         }
 
-        .back-button {
-            background-color: #d9534f;
-        }
         .back-button:hover {
             background-color: #c9302c;
-        }
-        .fetch-button {
-            background-color: #28a745;
-        }
-        .fetch-button:hover {
-            background-color: #218838;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -95,88 +70,82 @@
                 box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
                 border: 1px solid var(--border-dark);
             }
-
-            .action-box {
-                background: var(--container-dark);
-                border: 1px solid var(--border-dark);
-                color: var(--text-dark);
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Selecionar Conta</h2>
-        <p id="selectedAccount">Nenhuma conta selecionada</p>
-        
-        <p id="statusMessage" class="status-message">Buscando ação...</p>
+        <select id="accountSelect" onchange="bindAccount()">
+            <option value="">Selecione uma conta</option>
+        </select>
+        <p id="statusMessage" class="status-message">Aguardando seleção...</p>
 
-        <div id="actionBox" class="action-box">
-            <p><strong>Ação:</strong> <span id="actionType"></span></p>
-            <p><strong>Usuário:</strong> <span id="username"></span></p>
-            <p><strong>URL:</strong> <a id="actionUrl" href="#" target="_blank">Abrir</a></p>
-            <p><strong>Pontos:</strong> <span id="points"></span></p>
-        </div>
-
-        <button class="fetch-button" onclick="startFetchingAction()">Buscar Ação</button>
         <button class="back-button" onclick="goBack()">Voltar</button>
     </div>
 
     <script>
-        let fetchInterval;
+        async function bindAccount() {
+            const selectedAccount = document.getElementById("accountSelect").value;
+            if (!selectedAccount) return;
 
-        function loadSelectedAccount() {
-            const selectedAccount = localStorage.getItem('selectedAccount');
-            if (selectedAccount) {
-                document.getElementById('selectedAccount').textContent = `Conta Selecionada: ${selectedAccount}`;
-            } else {
-                document.getElementById('selectedAccount').textContent = "Nenhuma conta selecionada";
+            document.getElementById("statusMessage").textContent = "Vinculando conta...";
+
+            try {
+                const response = await fetch(`http://api.ganharnoinsta.com/bind_tk.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&nome_usuario=${selectedAccount}`);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    localStorage.setItem("id_conta", data.id_conta);
+                    document.getElementById("statusMessage").textContent = "Conta vinculada!";
+                    fetchAction();
+                } else {
+                    document.getElementById("statusMessage").textContent = "Erro ao vincular conta.";
+                }
+            } catch (error) {
+                document.getElementById("statusMessage").textContent = "Erro na requisição.";
             }
-        }
-
-        function startFetchingAction() {
-            clearInterval(fetchInterval);
-            fetchInterval = setInterval(fetchAction, 3000);
         }
 
         async function fetchAction() {
-            const accountId = localStorage.getItem('selectedAccount');
-            if (!accountId) {
-                alert("Nenhuma conta selecionada!");
-                return;
-            }
+            const id_conta = localStorage.getItem("id_conta");
+            if (!id_conta) return;
 
-            const apiUrl = `https://cors-anywhere.herokuapp.com/https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=${accountId}&is_tiktok=1&tipo=1`;
-            
+            document.getElementById("statusMessage").textContent = "Buscando ações...";
+
             try {
-                const response = await fetch(apiUrl, { method: 'GET' });
+                const response = await fetch(`https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=${id_conta}&is_tiktok=1&tipo=1`);
+                const data = await response.json();
 
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    if (data.status === "ENCONTRADA") {
-                        document.getElementById('statusMessage').textContent = "Ação encontrada!";
-                        document.getElementById('actionType').textContent = data.tipo_acao;
-                        document.getElementById('username').textContent = data.nome_usuario;
-                        document.getElementById('actionUrl').href = data.url;
-                        document.getElementById('points').textContent = data.quantidade_pontos;
-                        document.getElementById('actionBox').style.display = "block";
-                        clearInterval(fetchInterval);
-                    }
+                if (data.status === "ENCONTRADA") {
+                    document.getElementById("statusMessage").textContent = "Ação encontrada!";
                 } else {
-                    console.error('Erro ao obter resposta da API:', response.status);
+                    document.getElementById("statusMessage").textContent = "Nenhuma ação disponível.";
                 }
             } catch (error) {
-                console.error("Erro na requisição:", error);
+                document.getElementById("statusMessage").textContent = "Erro ao buscar ação.";
             }
+        }
+
+        function loadAccounts() {
+            const accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+            const accountSelect = document.getElementById("accountSelect");
+            
+            accounts.forEach(account => {
+                if (account.status === "Aprovado") {
+                    const option = document.createElement("option");
+                    option.value = account.name;
+                    option.textContent = account.name;
+                    accountSelect.appendChild(option);
+                }
+            });
         }
 
         function goBack() {
-            clearInterval(fetchInterval);
-            window.location.href = "gerenciar_contas.html";
+            window.location.href = "index.html";
         }
 
-        window.onload = loadSelectedAccount;
+        window.onload = loadAccounts;
     </script>
 </body>
 </html>
