@@ -84,19 +84,6 @@
             background-color: #218838;
         }
 
-        .select-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .select-button:hover {
-            background-color: #0056b3;
-        }
-
         .back-button {
             width: 100%;
             padding: 10px;
@@ -145,14 +132,13 @@
             accounts.forEach((account, index) => {
                 const li = document.createElement('li');
                 li.className = "account-item";
-                li.innerHTML = `
+                li.innerHTML = 
                     ${account.name}
                     <span class="status ${account.status === 'Pendente' ? 'pending' : 'approved'}">
                         ${account.status}
                     </span>
-                    ${account.status === "Pendente" ? `<button class="approve-button" onclick="approveAccount(${index})">Aprovar</button>` : ""}
-                    <button class="select-button" onclick="selectAccount(${index})">Selecionar</button>
-                `;
+                    ${account.status === "Pendente" ? <button class="approve-button" onclick="approveAccount(${index})">Aprovar</button> : ""}
+                ;
                 accountList.appendChild(li);
             });
         }
@@ -162,14 +148,6 @@
             accounts[index].status = "Aprovado";
             localStorage.setItem('accounts', JSON.stringify(accounts));
             loadAccounts();
-        }
-
-        function selectAccount(index) {
-            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-            const account = accounts[index];
-            // Armazena o índice da conta selecionada no localStorage
-            localStorage.setItem('selectedAccountIndex', index);
-            window.location.href = "selecionar_conta.html"; // Redireciona para a página de selecionar conta
         }
 
         function goBack() {
