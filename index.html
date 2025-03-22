@@ -60,11 +60,20 @@
 <body>
     <div class="container">
         <h2>Saldo Disponível</h2>
-        <p class="saldo" id="saldo">Carregando...</p>
+        <p class="saldo">R$ 0,00</p>
+    </div>
+    <div class="login-form">
+        <h3>Login Ganharnasredes</h3>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Digite seu e-mail" required>
+            <input type="password" id="senha" placeholder="Digite sua senha" required>
+            <label><input type="checkbox" id="rememberMe"> Lembrar-me</label>
+            <button type="submit">Entrar</button>
+        </form>
     </div>
 
     <script>
-        // Função para definir cookies automaticamente
+        // Função para salvar cookies
         function setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -72,46 +81,50 @@
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toUTCString();
             }
-            document.cookie = name + "=" + value + "; path=/; domain=.ganharnasredes.com" + expires;
+            document.cookie = name + "=" + value + "; path=/" + expires;
         }
 
-        // Definir os cookies do usuário
-        function carregarCookies() {
-            let cookies = [
-                {name: "PHPSESSID", value: "k29pq0ltqcen8odtqq1bvab8ct"}
-            ];
-            
-            cookies.forEach(cookie => {
-                setCookie(cookie.name, cookie.value, 1); // Cookies válidos por 1 dia
-            });
-
-            console.log("Cookies de login carregados!");
-        }
-
-        // Verificar saldo automaticamente
-        async function carregarSaldo() {
-            try {
-                let response = await fetch("https://ganharnasredes.com/api/saldo", {
-                    credentials: "include"
-                });
-                
-                if (!response.ok) {
-                    throw new Error("Erro ao obter saldo");
-                }
-
-                let data = await response.json();
-                document.getElementById("saldo").innerText = "R$ " + data.saldo;
-            } catch (error) {
-                document.getElementById("saldo").innerText = "Erro ao carregar saldo";
-                console.error(error);
+        // Função para obter cookies
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
             }
+            return null;
         }
 
-        // Executar funções ao carregar a página
+        // Preencher os campos com os cookies salvos
         window.onload = function() {
-            carregarCookies(); // Definir cookies de login
-            carregarSaldo(); // Buscar saldo automaticamente
+            let savedEmail = getCookie("email");
+            let savedPassword = getCookie("senha");
+            if (savedEmail && savedPassword) {
+                document.getElementById("email").value = savedEmail;
+                document.getElementById("senha").value = savedPassword;
+                document.getElementById("rememberMe").checked = true;
+            }
         };
+
+        // Salvar login nos cookies se "Lembrar-me" estiver marcado
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let email = document.getElementById("email").value;
+            let senha = document.getElementById("senha").value;
+            let rememberMe = document.getElementById("rememberMe").checked;
+            
+            if (rememberMe) {
+                setCookie("email", email, 30);
+                setCookie("senha", senha, 30);
+            } else {
+                setCookie("email", "", -1);
+                setCookie("senha", "", -1);
+            }
+
+            alert("Login salvo! Redirecionando...");
+            window.location.href = "https://ganharnasredes.com/login";
+        });
     </script>
 </body>
 </html>
