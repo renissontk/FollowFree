@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Contas</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .account-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .account-item {
+            background-color: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .link-container {
+            margin-top: 20px;
+        }
+        .link-container a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .link-container a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gerenciar Contas</h2>
+
+        <ul class="account-list" id="accountList">
+            <!-- Contas serão listadas aqui -->
+        </ul>
+
+        <div class="link-container">
+            <a href="index.html">Voltar para Saldo Disponível</a>
+            <br>
+            <a href="adicionar_conta.html">Adicionar Nova Conta</a>
+        </div>
+    </div>
+
+    <script>
+        function loadAccounts() {
+            // Recupera as contas salvas no LocalStorage
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+            const accountList = document.getElementById('accountList');
+
+            // Adiciona cada conta à lista
+            accounts.forEach(account => {
+                const li = document.createElement('li');
+                li.classList.add('account-item');
+                li.textContent = account;
+                accountList.appendChild(li);
+            });
+
+            // Se não houver contas, exibe uma mensagem
+            if (accounts.length === 0) {
+                accountList.innerHTML = '<li class="account-item">Nenhuma conta cadastrada.</li>';
+            }
+        }
+
+        window.onload = loadAccounts;
+    </script>
+</body>
+</html>
