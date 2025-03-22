@@ -119,33 +119,11 @@
             fetchInterval = setInterval(fetchAction, 3000);
         }
 
-async function fetchAction() {
-    try {
-        const response = await fetch("https://cors-anywhere.herokuapp.com/https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=7378036873987736619&is_tiktok=1&tipo=1", {
-            method: 'GET',
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-
-            if (data.status === "ENCONTRADA") {
-                document.getElementById('statusMessage').textContent = "Ação encontrada!";
-                document.getElementById('actionType').textContent = data.tipo_acao;
-                document.getElementById('username').textContent = data.nome_usuario;
-                document.getElementById('actionUrl').href = data.url;
-                document.getElementById('points').textContent = data.quantidade_pontos;
-                document.getElementById('actionBox').style.display = "block";
-
-                clearInterval(fetchInterval); // Para a busca quando encontra uma ação
-            }
-        } else {
-            console.error('Erro ao obter resposta da API:', response.status);
-        }
-    } catch (error) {
-        console.error("Erro na requisição:", error);
-    }
-}
-
+        async function fetchAction() {
+            try {
+                const response = await fetch("https://cors-anywhere.herokuapp.com/https://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=7378036873987736619&is_tiktok=1&tipo=1", {
+                    method: 'GET',
+                });
 
                 if (response.ok) {
                     const data = await response.json();
