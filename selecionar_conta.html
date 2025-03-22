@@ -49,27 +49,31 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        .action-button, .back-button {
-            width: 100%;
+        .action-box {
+            margin-top: 15px;
             padding: 10px;
-            margin-top: 10px;
-            border: none;
+            background: var(--container-light);
+            border: 1px solid #ddd;
             border-radius: 5px;
-            cursor: pointer;
-            color: white;
-            font-size: 16px;
+            text-align: left;
+            display: none;
+            transition: background 0.3s, border 0.3s;
         }
 
-        .action-button {
-            background-color: #4CAF50;
-        }
-
-        .action-button:hover {
-            background-color: #45a049;
+        .action-box p {
+            margin: 5px 0;
+            font-size: 14px;
         }
 
         .back-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
             background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         .back-button:hover {
@@ -88,7 +92,7 @@
                 border: 1px solid var(--border-dark);
             }
 
-            .select-box {
+            .select-box, .action-box {
                 background: var(--container-dark);
                 border: 1px solid var(--border-dark);
                 color: var(--text-dark);
@@ -101,11 +105,17 @@
         <h2>Selecionar Conta</h2>
 
         <label for="accountSelect">Escolha uma conta:</label>
-        <select id="accountSelect" class="select-box">
+        <select id="accountSelect" class="select-box" onchange="fetchAction()">
             <option value="">Selecione uma conta</option>
         </select>
 
-        <button class="action-button" onclick="performAction()">Confirmar Ação</button>
+        <div id="actionBox" class="action-box">
+            <p><strong>Ação:</strong> <span id="actionType"></span></p>
+            <p><strong>Usuário:</strong> <span id="username"></span></p>
+            <p><strong>URL:</strong> <a id="actionUrl" href="#" target="_blank">Abrir</a></p>
+            <p><strong>Pontos:</strong> <span id="points"></span></p>
+        </div>
+
         <button class="back-button" onclick="goBack()">Voltar</button>
     </div>
 
@@ -118,22 +128,39 @@
             accounts.forEach(account => {
                 if (account.status === "Aprovado") { 
                     const option = document.createElement('option');
-                    option.value = account.name;
+                    option.value = account.id;
                     option.textContent = account.name;
                     accountSelect.appendChild(option);
                 }
             });
         }
 
-        function performAction() {
+        async function fetchAction() {
             const selectedAccount = document.getElementById('accountSelect').value;
-
             if (!selectedAccount) {
-                alert("Por favor, selecione uma conta antes de continuar.");
+                document.getElementById('actionBox').style.display = "none";
                 return;
             }
 
-            alert(`Ação realizada na conta: ${selectedAccount}`);
+            try {
+                const url = `http://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=${selectedAccount}&is_tiktok=1&tipo=1`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status === "ENCONTRADA") {
+                    document.getElementById('actionType').textContent = data.tipo_acao;
+                    document.getElementById('username').textContent = data.nome_usuario;
+                    document.getElementById('actionUrl').href = data.url;
+                    document.getElementById('points').textContent = data.quantidade_pontos;
+                    document.getElementById('actionBox').style.display = "block";
+                } else {
+                    alert("Nenhuma ação encontrada para esta conta.");
+                    document.getElementById('actionBox').style.display = "none";
+                }
+            } catch (error) {
+                alert("Erro ao buscar ação. Tente novamente.");
+                console.error("Erro na requisição:", error);
+            }
         }
 
         function goBack() {
