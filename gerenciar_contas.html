@@ -23,30 +23,56 @@
             width: 300px;
         }
         .account-list {
-            list-style-type: none;
+            list-style: none;
             padding: 0;
+            margin-top: 10px;
         }
         .account-item {
-            background-color: #f9f9f9;
-            margin: 5px 0;
             padding: 10px;
-            border-radius: 5px;
+            background: #fff;
             border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status {
+            font-size: 14px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .pending {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .approved {
+            background-color: #28a745;
+            color: white;
+        }
+        .approve-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
             cursor: pointer;
         }
-        .account-item:hover {
-            background-color: #e0e0e0;
+        .approve-button:hover {
+            background-color: #218838;
         }
-        .link-container {
-            margin-top: 20px;
+        .back-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .link-container a {
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        .link-container a:hover {
-            text-decoration: underline;
+        .back-button:hover {
+            background-color: #c9302c;
         }
     </style>
 </head>
@@ -54,42 +80,41 @@
     <div class="container">
         <h2>Gerenciar Contas</h2>
 
-        <ul class="account-list" id="accountList">
-            <!-- Contas serão listadas aqui -->
-        </ul>
+        <ul id="accountList" class="account-list"></ul>
 
-        <div class="link-container">
-            <a href="index.html">Voltar para Saldo Disponível</a>
-            <br>
-            <a href="adicionar_conta.html">Adicionar Nova Conta</a>
-        </div>
+        <button class="back-button" onclick="goBack()">Voltar</button>
     </div>
 
     <script>
         function loadAccounts() {
-            // Recupera as contas salvas no LocalStorage
             const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
             const accountList = document.getElementById('accountList');
 
-            // Adiciona cada conta à lista
-            accounts.forEach(account => {
+            accountList.innerHTML = "";
+
+            accounts.forEach((account, index) => {
                 const li = document.createElement('li');
-                li.classList.add('account-item');
-                li.textContent = account;
-
-                // Ao clicar, armazena a conta selecionada e redireciona para a página de ações
-                li.onclick = function() {
-                    localStorage.setItem('selectedAccount', account);
-                    window.location.href = 'acao_conta.html';  // Redireciona para a página de ações
-                };
-
+                li.className = "account-item";
+                li.innerHTML = `
+                    ${account.name}
+                    <span class="status ${account.status === 'Pendente' ? 'pending' : 'approved'}">
+                        ${account.status}
+                    </span>
+                    ${account.status === "Pendente" ? `<button class="approve-button" onclick="approveAccount(${index})">Aprovar</button>` : ""}
+                `;
                 accountList.appendChild(li);
             });
+        }
 
-            // Se não houver contas, exibe uma mensagem
-            if (accounts.length === 0) {
-                accountList.innerHTML = '<li class="account-item">Nenhuma conta cadastrada.</li>';
-            }
+        function approveAccount(index) {
+            let accounts = JSON.parse(localStorage.getItem('accounts'));
+            accounts[index].status = "Aprovado";
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            loadAccounts();
+        }
+
+        function goBack() {
+            window.location.href = "index.html";
         }
 
         window.onload = loadAccounts;
