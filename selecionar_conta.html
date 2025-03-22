@@ -38,15 +38,11 @@
             transition: background 0.3s;
         }
 
-        .select-box {
-            width: 100%;
-            padding: 10px;
+        .status-message {
             margin-top: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            background: var(--container-light);
-            color: var(--text-light);
-            transition: background 0.3s, color 0.3s;
+            font-size: 14px;
+            font-weight: bold;
+            color: #007BFF;
         }
 
         .action-box {
@@ -92,7 +88,7 @@
                 border: 1px solid var(--border-dark);
             }
 
-            .select-box, .action-box {
+            .action-box {
                 background: var(--container-dark);
                 border: 1px solid var(--border-dark);
                 color: var(--text-dark);
@@ -104,10 +100,7 @@
     <div class="container">
         <h2>Selecionar Conta</h2>
 
-        <label for="accountSelect">Escolha uma conta:</label>
-        <select id="accountSelect" class="select-box" onchange="startFetchingAction()">
-            <option value="">Selecione uma conta</option>
-        </select>
+        <p id="statusMessage" class="status-message">Buscando ação...</p>
 
         <div id="actionBox" class="action-box">
             <p><strong>Ação:</strong> <span id="actionType"></span></p>
@@ -122,50 +115,25 @@
     <script>
         let fetchInterval;
 
-        function loadAccounts() {
-            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-            const accountSelect = document.getElementById('accountSelect');
-
-            accountSelect.innerHTML = '<option value="">Selecione uma conta</option>';
-            accounts.forEach(account => {
-                if (account.status === "Aprovado") { 
-                    const option = document.createElement('option');
-                    option.value = account.id;
-                    option.textContent = account.name;
-                    accountSelect.appendChild(option);
-                }
-            });
-        }
-
         function startFetchingAction() {
-            const selectedAccount = document.getElementById('accountSelect').value;
-
-            if (!selectedAccount) {
-                document.getElementById('actionBox').style.display = "none";
-                clearInterval(fetchInterval);
-                return;
-            }
-
-            // Para garantir que não tenha múltiplos intervalos ativos
-            clearInterval(fetchInterval);
-
-            fetchInterval = setInterval(() => fetchAction(selectedAccount), 3000);
+            fetchInterval = setInterval(fetchAction, 3000);
         }
 
-        async function fetchAction(accountId) {
+        async function fetchAction() {
             try {
-                const url = `http://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=7378036873987736619&is_tiktok=1&tipo=1`;
+                const url = "http://api.ganharnoinsta.com/get_action.php?token=afc012ec-a318-433d-b3c0-5bf07cd29430&sha1=e5990261605cd152f26c7919192d4cd6f6e22227&id_conta=7378036873987736619&is_tiktok=1&tipo=1";
                 const response = await fetch(url);
                 const data = await response.json();
 
                 if (data.status === "ENCONTRADA") {
+                    document.getElementById('statusMessage').textContent = "Ação encontrada!";
                     document.getElementById('actionType').textContent = data.tipo_acao;
                     document.getElementById('username').textContent = data.nome_usuario;
                     document.getElementById('actionUrl').href = data.url;
                     document.getElementById('points').textContent = data.quantidade_pontos;
                     document.getElementById('actionBox').style.display = "block";
 
-                    clearInterval(fetchInterval); // Para de chamar a API ao encontrar uma ação válida
+                    clearInterval(fetchInterval); // Para a busca quando encontra uma ação
                 }
             } catch (error) {
                 console.error("Erro na requisição:", error);
@@ -173,11 +141,11 @@
         }
 
         function goBack() {
-            clearInterval(fetchInterval); // Para a busca ao sair
+            clearInterval(fetchInterval);
             window.location.href = "index.html";
         }
 
-        window.onload = loadAccounts;
+        window.onload = startFetchingAction;
     </script>
 </body>
 </html>
