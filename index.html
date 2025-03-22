@@ -27,28 +27,16 @@
             font-weight: bold;
             color: #2d8f2d;
         }
-        .form-container {
+        .link-container {
             margin-top: 20px;
-            text-align: left;
         }
-        .form-container input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        .link-container a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
         }
-        .form-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .form-container button:hover {
-            background-color: #45a049;
+        .link-container a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -57,23 +45,9 @@
         <h2>Saldo Disponível</h2>
         <p class="saldo">R$ 0,00</p>
 
-        <div class="form-container">
-            <h3>Adicionar Conta</h3>
-            <input type="text" placeholder="Nome da Conta" id="accountName">
-            <button onclick="addAccount()">Adicionar Conta</button>
+        <div class="link-container">
+            <a href="adicionar_conta.html">Adicionar Conta</a>
         </div>
     </div>
-
-    <script>
-        function addAccount() {
-            const accountName = document.getElementById('accountName').value;
-            if (accountName) {
-                alert(`Conta "${accountName}" adicionada com sucesso!`);
-                document.getElementById('accountName').value = '';  // Limpa o campo de entrada
-            } else {
-                alert("Por favor, insira um nome para a conta.");
-            }
-        }
-    </script>
 </body>
 </html>
